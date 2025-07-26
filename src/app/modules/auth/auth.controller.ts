@@ -1,16 +1,51 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express"
-import httpStatus from "http-status-codes"
+import httpStatus, { ACCEPTED } from "http-status-codes"
 import { sendResponse } from "../../utils/sendResponse"
 import { AuthServices } from "./auth.service"
 import { catchAsync } from "../../utils/utils/catchAsync"
 import AppError from "../../errorHelpers/AppError"
 import { setAuthCookeie } from "../../utils/utils/setCookie"
 import { JwtPayload } from "jsonwebtoken"
+import { createUserTokens } from "../../utils/utils/userTokens"
+import { envVars } from "../../config/env"
+import passport from "passport";
 
 const credentialsLogin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
 
-    const loginInfo = await AuthServices.credentialsLogin(req.body)
+    // const loginInfo = await AuthServices.credentialsLogin(req.body)
+
+    passport.authenticate("local", async (err: any, user:any, info: any) => {
+
+        if (err) {
+        return next(new AppError(401, err))
+        }
+
+        if (!user) {
+            return next(new AppError(401, info.message))
+        }
+        
+        const userTokens = await createUserTokens(user)
+         
+        delete user.toObject().password
+        const { password: pass,  ...rest } = user.toObject()
+
+        setAuthCookeie(res, userTokens)
+
+        sendResponse(res, {
+            success: true,
+            statusCode: httpStatus.OK,
+            message: "User Logged In Successfully",
+            data: {
+                accessToken: userTokens.accessToken,
+                refresfToken: userTokens.refreshToken,
+                user: rest,
+            },
+        })
+    })(req,res,next)
+
+
 
     // res.cookie('accessToken', loginInfo.accessToken, {
     //     httpOnly: true,
@@ -22,14 +57,7 @@ const credentialsLogin = catchAsync(async (req: Request, res: Response, next: Ne
     //     secure: false
     // })
     
-    setAuthCookeie(res, loginInfo)
-
-    sendResponse(res, {
-        success: true,
-        statusCode: httpStatus.OK,
-        message: "User Logged In Successfully",
-        data: loginInfo,
-    })
+   
 })
 
 
@@ -98,9 +126,40 @@ const resetPassword = catchAsync(async (req: Request, res: Response, next: NextF
     })
 })
 
+const googleCallbackController = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+
+    let redirectTo = req.query.state ? req.query.state as string : "";
+
+    if (redirectTo.startsWith("/")) {
+        redirectTo = redirectTo.slice(1)
+    }
+
+    // /booking => booking, => "/" => ""
+    const user = req.user;
+
+    if (!user) {
+        throw new AppError(httpStatus.NOT_FOUND, "User Not Found")
+    }
+
+    const tokenInfo = createUserTokens(user)
+    
+    setAuthCookeie(res, tokenInfo)
+
+
+    // sendResponse(res, {
+    //     success: true,
+    //     statusCode: httpStatus.OK,
+    //     message: "Password Changed Successfully",
+    //     data: null,
+    // })
+
+    res.redirect(`${envVars.FRONTEND_URL}/${redirectTo}`)
+})
+
 export const AuthControllers = {
     credentialsLogin,
     getNewAccessToken,
     logout,
-    resetPassword
+    resetPassword,
+    googleCallbackController,
 }

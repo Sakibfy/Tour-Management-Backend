@@ -14,7 +14,7 @@ const createUser = async (payload: Partial<IUser>) => {
   
   
 
-  const hashedPassword = bcryptjs.hash(password as string, Number(envVars.BCRYPT_SALT_ROUND))
+  const hashedPassword = await bcryptjs.hash(password as string, Number(envVars.BCRYPT_SALT_ROUND))
 
   
     

@@ -11,34 +11,34 @@ import { envVars } from "../../config/env";
 
 
 
-const credentialsLogin = async (payload: Partial<IUser>) => {
-    const { email, password } = payload;
+// const credentialsLogin = async (payload: Partial<IUser>) => {
+//     const { email, password } = payload;
 
-    const isUserExist = await User.findOne({ email })
+//     const isUserExist = await User.findOne({ email })
 
-    if (!isUserExist) {
-        throw new AppError(httpStatus.BAD_REQUEST, "Email does not exist")
-    }
+//     if (!isUserExist) {
+//         throw new AppError(httpStatus.BAD_REQUEST, "Email does not exist")
+//     }
 
-    const isPasswordMatched = await bcryptjs.compare(password as string, isUserExist.password as string)
+//     const isPasswordMatched = await bcryptjs.compare(password as string, isUserExist.password as string)
 
-    if (!isPasswordMatched) {
-        throw new AppError(httpStatus.BAD_REQUEST, "Incorrect Password")
-    }
+//     if (!isPasswordMatched) {
+//         throw new AppError(httpStatus.BAD_REQUEST, "Incorrect Password")
+//     }
     
-    const userTokens = createUserTokens(isUserExist)
+//     const userTokens = createUserTokens(isUserExist)
 
-    // delete isUserExist.password;
+//     // delete isUserExist.password;
 
-    const { password: pass,  ...rest } = isUserExist.toObject()
+//     const { password: pass,  ...rest } = isUserExist.toObject()
 
-    return {
-        accessToken: userTokens.accessToken,
-        refreshToken: userTokens.accessToken,
-        user: rest
-    }
+//     return {
+//         accessToken: userTokens.accessToken,
+//         refreshToken: userTokens.accessToken,
+//         user: rest
+//     }
 
-}
+// }
 
 
 const getNewAccessToken = async (refreshToken: string) => {
@@ -74,7 +74,7 @@ const resetPassword = async (oldPassword: string,  newPassword: string, decodedT
  
 
 export const AuthServices = {
-    credentialsLogin,
+    // credentialsLogin,
     getNewAccessToken,
     resetPassword,
 }

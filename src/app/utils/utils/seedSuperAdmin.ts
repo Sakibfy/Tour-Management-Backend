@@ -24,7 +24,7 @@ const hashedPassword = await bcrtptjs.hash(envVars.SUPER_ADMIN_PASSWORD,  Number
 
     const payload: IUser = {
       name: "Super admin",
-      role: Role.SUPRE_ADMIN,
+      role: Role.SUPER_ADMIN,
       email: envVars.SUPER_ADMIN_EMAIL,
       password: hashedPassword,
       isVerified: true,
