@@ -1,6 +1,6 @@
 import express from "express";
 import { checkAuth } from "../../middlewares/checkAuth";
-import { validateRequest } from "../../middlewares/validateRequest";
+
 import { Role } from "../user/user.interface";
 import { TourController } from "./tour.controller";
 import {
@@ -8,6 +8,7 @@ import {
     createTourZodSchema,
     updateTourZodSchema,
 } from "./tour.validation";
+import { validateRequest } from "../../middlewares/vailidateRequest";
 
 const router = express.Router();
 
