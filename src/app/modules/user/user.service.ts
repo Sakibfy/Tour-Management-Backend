@@ -12,14 +12,12 @@ import AppError from "../../errorHelpers/AppError";
 const createUser = async (payload: Partial<IUser>) => {
   const { email,password, ...rest } = payload;
   
-  
-
   const hashedPassword = await bcryptjs.hash(password as string, Number(envVars.BCRYPT_SALT_ROUND))
-
-  
-    
+ 
   const authProvider: IAuthProvider = { provider: "credentials", providerId: email! }
   
+
+
 
   const user = await User.create({
     email,
@@ -27,6 +25,7 @@ const createUser = async (payload: Partial<IUser>) => {
     auths: [authProvider],
     ...rest
   })
+  
   return user
 }
 
