@@ -1,24 +1,27 @@
 import { Response } from "express";
 
-export  interface AuthTokens {
-  accessToken?: string;
-  refreshToken ?: string;
+
+
+export interface AuthTokens {
+    accessToken?: string;
+    refreshToken?: string;
 }
 
-export const setAuthCookeie = (res: Response, tokeninfo: AuthTokens) => {
+export const setAuthCookie = (res: Response, tokenInfo: AuthTokens) => {
+  if (tokenInfo.accessToken) {
+     
+        res.cookie("accessToken", tokenInfo.accessToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none"
+        })
+    }
 
-  if (tokeninfo.accessToken) {
-    res.cookie('accessToken', tokeninfo.accessToken, {
-      httpOnly: true,
-      secure: false
-  })
-  }
-
-  if (tokeninfo.refreshToken) {
-
-    res.cookie('refreshToken', tokeninfo.refreshToken, {
-      httpOnly: true,
-      secure: false
-  })
-  }
+    if (tokenInfo.refreshToken) {
+        res.cookie("refreshToken", tokenInfo.refreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "none"
+        })
+    }
 }

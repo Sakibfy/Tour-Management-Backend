@@ -33,7 +33,7 @@ const hashedPassword = await bcrtptjs.hash(envVars.SUPER_ADMIN_PASSWORD,  Number
     
     const superadmin = await User.create(payload)
     console.log("Super Admin Created Successfully! \n");
-    console.log(superadmin);
+    // console.log(superadmin);
     
 
   } catch (error) {

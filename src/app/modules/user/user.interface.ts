@@ -33,7 +33,7 @@ export interface IUser {
   isActive ?: IsActive;
   isVerified?: boolean;
   role: Role;
-  auth: IAuthProvider[];
+  auths: IAuthProvider[];
   bookings ?: Types.ObjectId[] 
   guides : Types.ObjectId[] 
 
